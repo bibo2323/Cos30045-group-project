@@ -9,7 +9,7 @@ From this folder, run `python3 -m http.server 8000`, then open `http://localhost
 ## Files
 
 - `index.html`: page layout and accessible controls.
-- `main.css`: soft mint/lavender gradients, responsive layout, focus styles and reduced motion support.
+- `main.css`: gentle yellow gradients, compact responsive layout, smooth anchor scrolling, subtle animations and reduced motion support.
 - `load_data.js`: shared data snapshot, formatting and source notes.
 - `line_chart.js`: trend chart and series break markers.
 - `horizontal_bar_chart.js`: sortable comparison chart and bar selection.
