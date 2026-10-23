@@ -23,9 +23,49 @@
     get('yearRange').setAttribute('aria-valuetext', `${view.year}, calendar year`);
     get('comparisonYear').textContent = view.year;
     get('legendState').textContent = view.state;
+    get('selectionBadge').textContent = `Selected: ${view.state} · ${view.year}`;
     get('downloadDatasetName').textContent = `Download ${view.state} & Australia road injury dataset ↓`;
     get('nationalLegend').hidden = !view.showNational;
 
+  }
+
+  function updateKeyPoints() {
+    const index = YEARS.indexOf(view.year);
+    const values = SERIES[view.state];
+    const count = values[index];
+    const national = SERIES.Australia[index];
+    const peak = Math.max(...values);
+    const peakYears = YEARS.filter((year, position) => values[position] === peak);
+    const breakYear = YEARS.find(year => isBreakYear(view.state, year));
+
+    get('keyPointsScope').textContent = `${view.state} · ${view.year}`;
+    get('summaryCount').textContent = formatNumber(count);
+    get('summaryShare').textContent = `${(count / national * 100).toFixed(1)}%`;
+    get('summaryShareNote').textContent = `Out of ${formatNumber(national)} nationwide in ${view.year}.`;
+    get('summaryPeak').textContent = formatNumber(peak);
+    get('summaryPeakNote').textContent = `${peakYears.join(', ')} · highest across 2011–2021.`;
+    get('summaryBreakNote').hidden = !breakYear;
+    get('summaryBreakNote').textContent = breakYear
+      ? `◇ ${view.state} recording changed in ${breakYear}. Compare across this break with care.`
+      : '';
+
+    get('summaryChangeLabel').textContent = index > 0 ? `Change from ${view.year - 1}` : 'Previous-year comparison';
+    if (index === 0) {
+      get('summaryChange').textContent = 'Not available';
+      get('summaryChangeNote').textContent = 'The dataset starts in 2011.';
+    } else if (isBreakYear(view.state, view.year) || isBreakYear(view.state, view.year - 1)) {
+      // Avoid interpreting a change across or next to altered recording as a trend.
+      get('summaryChange').textContent = 'Recording change';
+      get('summaryChangeNote').textContent = 'These years need a cautious comparison.';
+    } else {
+      const previous = values[index - 1];
+      const change = count - previous;
+      const percent = change / previous * 100;
+      get('summaryChange').textContent = `${change > 0 ? '+' : change < 0 ? '−' : ''}${Math.abs(percent).toFixed(1)}%`;
+      get('summaryChangeNote').textContent = change === 0
+        ? `The same count as ${view.year - 1}.`
+        : `${formatNumber(Math.abs(change))} ${change > 0 ? 'more' : 'fewer'} hospitalisations than ${view.year - 1}.`;
+    }
   }
 
   function updateTable() {
@@ -34,9 +74,18 @@
     get('dataRows').replaceChildren(...YEARS.map((year, index) => {
       const row = document.createElement('tr');
       row.setAttribute('aria-current', String(year === view.year));
+      row.dataset.year = String(year);
+      row.className = 'year-row';
       const heading = document.createElement('th');
       heading.scope = 'row';
-      heading.textContent = `${year}${isBreakYear(view.state, year) ? ' ◇' : ''}`;
+      const yearButton = document.createElement('button');
+      yearButton.type = 'button';
+      yearButton.className = 'year-select';
+      yearButton.dataset.year = String(year);
+      yearButton.textContent = `${year}${isBreakYear(view.state, year) ? ' ◇' : ''}`;
+      yearButton.setAttribute('aria-label', `Select year ${year}`);
+      yearButton.setAttribute('aria-pressed', String(year === view.year));
+      heading.append(yearButton);
       row.append(heading);
       [SERIES[view.state][index], SERIES.Australia[index]].forEach(value => {
         const cell = document.createElement('td');
@@ -49,10 +98,24 @@
 
   function render() {
     updateSummary();
+    updateKeyPoints();
     updateTable();
     lineChart?.update(view);
     barChart?.update(view);
   }
+
+  // One delegated handler supports row clicks and native keyboard activation.
+  get('dataRows').addEventListener('click', event => {
+    const row = event.target.closest('tr[data-year]');
+    if (!row || !get('dataRows').contains(row)) return;
+    const year = Number(row.dataset.year);
+    if (!YEARS.includes(year)) return;
+    view.year = year;
+    get('yearRange').value = year;
+    render();
+    // The table is rebuilt on render; keep keyboard focus on the chosen year.
+    get('dataRows').querySelector(`button[data-year="${year}"]`).focus({ preventScroll: true });
+  });
 
   get('stateSelect').addEventListener('change', event => {
     view.state = event.target.value;

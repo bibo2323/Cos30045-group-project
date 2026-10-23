@@ -12,10 +12,10 @@
     function barFill(context) {
       const selected = names[context.dataIndex] === view.state;
       const { ctx, chartArea } = context.chart;
-      if (!chartArea) return selected ? colors.lavender : colors.mint;
+      if (!chartArea) return selected ? colors.teal : colors.mint;
       const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
-      gradient.addColorStop(0, selected ? '#c2b9de' : '#b4d4c7');
-      gradient.addColorStop(1, selected ? colors.lavender : colors.mint);
+      gradient.addColorStop(0, selected ? '#72add6' : '#cce5f7');
+      gradient.addColorStop(1, selected ? colors.teal : colors.mint);
       return gradient;
     }
     const chart = new Chart(canvas, {
@@ -36,7 +36,7 @@
           tooltip: {
             backgroundColor: colors.ink,
             titleColor: '#ffffff',
-            bodyColor: '#f1f7f3',
+            bodyColor: '#f1f7fc',
             padding: 13,
             cornerRadius: 10,
             titleFont: { family: fontFamily, size: 18 },

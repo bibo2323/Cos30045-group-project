@@ -24,8 +24,8 @@ window.RoadInjury = {
   },
   JURISDICTIONS: ['NSW', 'Victoria', 'Queensland', 'South Australia', 'Western Australia', 'Tasmania', 'Northern Territory', 'ACT'],
   colors: {
-    teal: '#427b72', mint: '#89b5a6', lavender: '#a59bc9', ink: '#293f3b',
-    muted: '#667b74', grid: 'rgba(76,107,93,0.10)'
+    teal: '#367bb5', mint: '#9cc8e8', lavender: '#7c91b5', ink: '#243b53',
+    muted: '#526b82', grid: 'rgba(54,123,181,0.10)'
   },
   formatNumber: number => new Intl.NumberFormat('en-AU').format(number),
   isBreakYear: (state, year) => (state === 'NSW' && year === 2017) || (state === 'Victoria' && year === 2012)

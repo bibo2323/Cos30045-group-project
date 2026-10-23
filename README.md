@@ -9,7 +9,7 @@ From this folder, run `python3 -m http.server 8000`, then open `http://localhost
 ## Files
 
 - `index.html`: page layout and accessible controls.
-- `main.css`: gentle yellow gradients, compact responsive layout, smooth anchor scrolling, subtle animations and reduced motion support.
+- `main.css`: Clean Sky blue and white palette, compact responsive layout, smooth anchor scrolling, subtle animations and reduced motion support.
 - `load_data.js`: shared data snapshot, formatting and source notes.
 - `line_chart.js`: trend chart and series break markers.
 - `horizontal_bar_chart.js`: sortable comparison chart and bar selection.
@@ -17,7 +17,7 @@ From this folder, run `python3 -m http.server 8000`, then open `http://localhost
 
 ## Explore
 
-Choose a jurisdiction and move the year slider. Sort the horizontal bars, click a bar to select that jurisdiction, toggle the national line, reset the view, or download the selected jurisdiction's full annual series as CSV. The data table offers the same values without relying on charts.
+Choose a jurisdiction and move the year slider. Sort the horizontal bars, click a bar to select that jurisdiction, toggle the national line, reset the view, or download the selected jurisdiction's full annual series as CSV. Click a table row to select its year and update the charts and summary; year buttons also support Enter and Space. A selection badge shows the active state and year. The data table offers the same values without relying on charts.
 
 ## Data limits
 

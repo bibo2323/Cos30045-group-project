@@ -17,7 +17,7 @@
         const x = chart.scales.x.getPixelForValue(index);
         const { ctx, chartArea } = chart;
         ctx.save();
-        ctx.strokeStyle = 'rgba(66,123,114,0.24)';
+        ctx.strokeStyle = 'rgba(54,123,181,0.24)';
         ctx.setLineDash([4, 5]);
         ctx.beginPath();
         ctx.moveTo(x, chartArea.top);
@@ -28,10 +28,10 @@
     };
     function focusFill(context) {
       const { ctx, chartArea } = context.chart;
-      if (!chartArea) return 'rgba(137,181,166,0.10)';
+      if (!chartArea) return 'rgba(156,200,232,0.10)';
       const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-      gradient.addColorStop(0, 'rgba(137,181,166,0.30)');
-      gradient.addColorStop(1, 'rgba(137,181,166,0.01)');
+      gradient.addColorStop(0, 'rgba(156,200,232,0.30)');
+      gradient.addColorStop(1, 'rgba(156,200,232,0.01)');
       return gradient;
     }
     function dataset(state, national) {
@@ -73,8 +73,8 @@
           tooltip: {
             backgroundColor: colors.ink,
             titleColor: '#ffffff',
-            bodyColor: '#f1f7f3',
-            footerColor: '#dfd7f2',
+            bodyColor: '#f1f7fc',
+            footerColor: '#c9e2f5',
             padding: 13,
             cornerRadius: 10,
             displayColors: true,
