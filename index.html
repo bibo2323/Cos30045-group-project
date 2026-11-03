@@ -3,88 +3,111 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore Australian road crash hospitalisations with Group 20.">
+  <meta name="description" content="Group 20 explores Australian road crash hospitalisations with interactive D3 charts and verified national, state and First Nations data.">
   <meta name="theme-color" content="#f0f8ff">
   <title>Group 20 · Road injury in Australia</title>
-  <link rel="stylesheet" href="main.css?v=20261023-clean-sky">
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script defer src="load_data.js?v=20261023-clean-sky"></script>
-  <script defer src="line_chart.js?v=20261023-clean-sky"></script>
-  <script defer src="horizontal_bar_chart.js?v=20261023-clean-sky"></script>
-  <script defer src="main.js?v=20261023-clean-sky"></script>
+  <link rel="stylesheet" href="main.css?v=open-data-20261023">
+  <script defer src="vendor/d3.v7.min.js"></script>
+  <script defer src="load_data.js?v=open-data-20261023"></script>
+  <script defer src="line_chart.js?v=open-data-20261023"></script>
+  <script defer src="horizontal_bar_chart.js?v=open-data-20261023"></script>
+  <script defer src="main.js?v=open-data-20261023"></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#explore">Skip to charts</a>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="Group 20, home"><span class="brand-mark" aria-hidden="true">20</span>Group 20</a>
-    <a class="nav-link" href="#data">Data &amp; source ↓</a>
-  </header>
-
-  <main>
+  <header class="topbar"><a class="brand" href="#top" aria-label="Group 20, home"><span class="brand-mark" aria-hidden="true">20</span>Group 20</a><a class="nav-link" href="#data">Data &amp; source ↓</a></header>
+  <main id="app" data-topic="national" aria-busy="true">
     <section class="intro" aria-labelledby="pageTitle">
-      <div class="intro-copy">
-        <h1 id="pageTitle">Road injury in Australia</h1>
-        <p>Road crash hospitalisations · 2011–2021</p>
-      </div>
+      <div class="intro-copy"><h1 id="pageTitle">Road injury in Australia</h1><p>Road crash hospitalisations · 2011–2021</p></div>
       <div class="metrics" aria-live="polite" aria-atomic="true">
-        <article class="metric"><p class="metric-label" id="focusLabel">NSW · 2021</p><p class="metric-value" id="focusValue">—</p><p class="metric-detail">hospitalisations</p></article>
-        <article class="metric"><p class="metric-label" id="nationalLabel">Australia · 2021</p><p class="metric-value" id="nationalValue">—</p><p class="metric-detail">hospitalisations</p></article>
+        <article class="metric"><p class="metric-label" id="focusLabel">Australia · 2021</p><p class="metric-value" id="focusValue">—</p><p class="metric-detail">hospitalisations</p></article>
+        <article class="metric"><p class="metric-label" id="nationalLabel">Leading road user · 2021</p><p class="metric-value" id="nationalValue">—</p><p class="metric-detail" id="secondMetricDetail">hospitalisations</p></article>
       </div>
     </section>
 
-    <section id="explore" class="dashboard" aria-label="Interactive charts">
-      <div class="filter-bar">
-        <label class="field" for="stateSelect"><span>State / territory</span><select id="stateSelect"></select></label>
+    <div class="view-tabs" role="tablist" aria-label="Data topic">
+      <button id="tab-national" role="tab" aria-selected="true" aria-controls="explore" tabindex="0" data-topic="national" disabled>National</button>
+      <button id="tab-states" role="tab" aria-selected="false" aria-controls="explore" tabindex="-1" data-topic="states" disabled>States &amp; territories</button>
+      <button id="tab-first-nations" role="tab" aria-selected="false" aria-controls="explore" tabindex="-1" data-topic="first-nations" disabled>First Nations</button>
+    </div>
+    <section id="explore" class="dashboard" role="tabpanel" aria-labelledby="tab-national">
+      <p id="storyText" class="story-text">Explore the national trend and the road users behind the counts.</p>
+      <fieldset id="filters" class="filter-bar" disabled>
+        <legend class="sr-only">Chart filters</legend>
+        <label class="field" for="stateSelect"><span id="entityLabel">Road user</span><select id="stateSelect"></select></label>
         <div class="year-field"><label for="yearRange">Year <output id="selectedYear" for="yearRange">2021</output></label><input id="yearRange" type="range" min="2011" max="2021" step="1" value="2021"><div class="range-labels"><span>2011</span><span>2021</span></div></div>
         <button id="resetFilters" type="button" class="quiet-button">Reset</button>
-      </div>
-      <noscript><p class="notice">Enable JavaScript to use the charts. The source workbook is linked below.</p></noscript>
-      <p id="chartStatus" class="notice" role="status" hidden></p>
-
-
-
+      </fieldset>
+      <p id="loadStatus" class="notice" role="status">Loading the verified datasets…</p>
+      <button id="retryLoad" class="quiet-button" type="button" hidden>Retry loading data</button>
+      <noscript><p class="notice">Enable JavaScript for the charts. Download the original datasets from the source links below.</p></noscript>
       <div class="charts-grid">
-      <article class="chart-card" aria-labelledby="trendTitle">
-        <div class="chart-heading"><h2 id="trendTitle">Yearly trend</h2><label class="toggle"><input id="showNational" type="checkbox" checked><span class="toggle-track" aria-hidden="true"></span> Show Australia</label></div>
-        <div class="chart-legend"><span><i class="focus-dot"></i><b id="legendState">NSW</b></span><span id="nationalLegend"><i class="national-dot"></i>Australia</span></div>
-        <div class="chart-wrap"><canvas id="trendChart" role="img" aria-label="Annual hospitalisations line chart"></canvas></div>
-        <p class="chart-foot">◇ Recording changed: NSW in 2017; Victoria in 2012. Compare across these years with care.</p>
-      </article>
-
-      <article class="chart-card" aria-labelledby="compareTitle">
-        <div class="chart-heading"><div><h2 id="compareTitle">State comparison</h2><p class="chart-year" id="comparisonYear">2021</p></div><label class="sort-control" for="sortSelect"><span>Sort by</span><select id="sortSelect"><option value="descending">Highest first</option><option value="alphabetical">Name A–Z</option></select></label></div>
-        <div class="chart-wrap compare-wrap"><canvas id="compareChart" role="img" aria-label="Hospitalisations by jurisdiction horizontal bar chart"></canvas></div>
-        <p class="chart-foot">Click a bar to select a state or territory.</p>
-      </article>
-
+        <article class="chart-card" aria-labelledby="trendTitle">
+          <div class="chart-heading"><h2 id="trendTitle">Yearly trend</h2><label id="comparisonToggle" class="toggle" hidden><input id="showNational" type="checkbox" checked><span class="toggle-track" aria-hidden="true"></span><span id="comparisonToggleLabel">Show Australia</span></label></div>
+          <div class="chart-wrap"><svg id="trendChart" aria-labelledby="trendTitle"></svg></div>
+          <p id="trendNote" class="chart-foot">Hospitalisations, not unique people or population-adjusted risk.</p>
+        </article>
+        <article class="chart-card" aria-labelledby="compareTitle">
+          <div class="chart-heading"><div><h2 id="compareTitle">Road users</h2><p class="chart-year" id="comparisonYear">2021</p></div><label class="sort-control" for="sortSelect"><span>Sort by</span><select id="sortSelect"><option value="descending">Highest first</option><option value="alphabetical">Name A–Z</option></select></label></div>
+          <div class="chart-wrap compare-wrap"><svg id="compareChart" aria-labelledby="compareTitle"></svg></div>
+          <p id="barNote" class="chart-foot">Select a bar to explore that road user.</p>
+        </article>
       </div>
+      <div id="data" class="data-tools">
+        <section class="data-panel data-card" aria-labelledby="annualDataTitle">
+          <h2 id="annualDataTitle">Data &amp; source</h2>
+          <div class="table-selection"><span id="selectionBadge" class="selection-badge" role="status" aria-live="polite" aria-atomic="true">Selected: National · 2021</span></div>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Annual hospitalisation data, scroll horizontally on small screens">
+            <table><caption id="tableCaption">Annual hospitalisations</caption><thead id="dataHead"></thead><tbody id="dataRows"></tbody></table>
+          </div>
+        </section>
 
-      <div class="data-tools">
-      <details id="data" class="data-panel" open>
-        <summary>Data &amp; source <span class="expand-icon" aria-hidden="true">+</span></summary>
-        <div class="table-selection"><span id="selectionBadge" class="selection-badge" role="status" aria-live="polite" aria-atomic="true">Selected: NSW · 2021</span></div>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Hospitalisation data table, scroll horizontally on small screens"><table><caption id="tableCaption">Annual road crash hospitalisations</caption><thead><tr>
-          <th scope="col">Year</th><th scope="col" id="tableState">NSW</th><th scope="col">Australia</th></tr></thead><tbody id="dataRows"></tbody></table></div>
-        <div class="source-note"><p>Source: AIHW, 2023 release · Table 1.</p><p>Counts are hospitalisations, not population-adjusted risk. National totals include people with unrecorded or migratory/offshore residence, so state totals may not sum to Australia. ◇ marks a recording change.</p><a class="text-link" href="dataset/state-and-territory-hospitalisation-injury-publication-2023.xlsx" download>Download full Australian State &amp; Territory Road Injury Dataset (Excel) ↓</a></div>
-      </details>
-      <aside class="data-sidebar" aria-labelledby="keyPointsTitle">
-        <button id="downloadCsv" type="button" class="quiet-button dataset-download"><span id="downloadDatasetName">Download NSW &amp; Australia road injury dataset ↓</span><span class="download-period">2011–2021</span></button>
-        <section class="key-points">
-          <h2 id="keyPointsTitle">Key points</h2>
-          <p class="summary-context" id="keyPointsScope">NSW · 2021</p>
+        <aside class="key-points data-card" aria-labelledby="keyPointsTitle">
+          <h2 id="keyPointsTitle">Key points</h2><p class="summary-context" id="keyPointsScope">National · 2021</p>
           <dl class="summary-facts" aria-live="polite" aria-atomic="true">
             <div class="summary-fact"><dt>Hospitalisations in selected year</dt><dd><strong id="summaryCount">—</strong></dd></div>
-            <div class="summary-fact"><dt>Share of Australia's total</dt><dd><strong id="summaryShare">—</strong><span id="summaryShareNote"></span></dd></div>
+            <div class="summary-fact"><dt id="summaryShareLabel">Leading road user</dt><dd><strong id="summaryShare">—</strong><span id="summaryShareNote"></span></dd></div>
             <div class="summary-fact"><dt id="summaryChangeLabel">Change from previous year</dt><dd><strong id="summaryChange">—</strong><span id="summaryChangeNote"></span></dd></div>
             <div class="summary-fact"><dt>Highest recorded count</dt><dd><strong id="summaryPeak">—</strong><span id="summaryPeakNote"></span></dd></div>
           </dl>
-          <p class="summary-note">Counts show hospitalisations, not population-adjusted risk.</p>
-          <p class="summary-note" id="summaryBreakNote" hidden></p>
+          <p class="summary-note">Counts show hospitalisations, not population-adjusted risk.</p><p class="summary-note" id="summaryBreakNote" hidden></p>
+        </aside>
+
+        <section class="comparison-data data-card" aria-labelledby="comparisonDataTitle">
+          <h2 id="comparisonDataTitle">Selected-year comparison values</h2>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Selected-year category data">
+            <table><caption id="comparisonCaption">Comparison data</caption><thead><tr><th scope="col" id="categoryHeading">Road user</th><th scope="col">Hospitalisations</th></tr></thead><tbody id="comparisonRows"></tbody></table>
+          </div>
         </section>
-      </aside>
+
+        <div class="resources-column">
+          <section class="methods data-card" aria-labelledby="methodsTitle">
+            <h2 id="methodsTitle">Data preparation &amp; all sources</h2>
+            <div class="source-note">
+              <p id="sourceDescription">BITRE hospitalised injury data, September 2023; underlying AIHW National Hospital Morbidity Database.</p>
+              <p>National and state traffic hospitalisations are totalled and checked against published tables. First Nations figures use published annual totals because some raw age cells are suppressed.</p>
+              <p id="sourceCaution">Counts are not population-adjusted risk. Unpublished values are missing, never zero.</p>
+              <a class="text-link" href="https://www.bitre.gov.au/resource/road-safety/hospitalised-injury" target="_blank" rel="noopener">View the official BITRE publication ↗</a>
+            </div>
+          </section>
+
+          <section id="downloads" class="downloads data-card" aria-labelledby="downloadsTitle">
+            <h2 id="downloadsTitle">Downloads</h2>
+            <button id="downloadCsv" type="button" class="quiet-button dataset-download" disabled>
+              <span id="downloadDatasetName">Download National Road Injury Dataset ↓</span>
+              <span class="download-period">2011–2021 · Spreadsheet (.csv)</span>
+            </button>
+            <ul class="download-resources" aria-label="Original workbooks and validation report">
+              <li><a data-source-topic="national" href="https://www.bitre.gov.au/sites/default/files/documents/hospitalisation_injury_publication_sep2023.xlsx" download><span>National Road Injury Dataset ↓</span><span class="resource-meta">Excel · 2011–2021</span></a></li>
+              <li><a data-source-topic="states" href="https://www.bitre.gov.au/sites/default/files/documents/state-and-territory-hospitalisation-injury-publication-2023.xlsx" download><span>State &amp; Territory Road Injury Dataset ↓</span><span class="resource-meta">Excel · 2011–2021</span></a></li>
+              <li><a data-source-topic="first-nations" href="https://www.bitre.gov.au/sites/default/files/documents/First-Nations-hospitalised-injuries-2023.xlsx" download><span>First Nations Road Injury Dataset ↓</span><span class="resource-meta">Excel · 2011–2021</span></a></li>
+              <li><a href="data/validation.json" download><span>Data Validation Report ↓</span><span class="resource-meta">Check results (.json)</span></a></li>
+            </ul>
+          </section>
+        </div>
       </div>
     </section>
-    <footer><span>Group 20</span><a href="#top">Back to top ↑</a></footer>
+    <footer><span>Group 20 · D3</span><a href="#top">Back to top ↑</a></footer>
   </main>
 </body>
 </html>
