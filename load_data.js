@@ -1,32 +1,81 @@
-/* The CSVs are produced by tools/prepare_data.py; unpublished counts stay null. */
-window.RoadInjury = {
-  YEARS: Array.from({ length: 11 }, (_, index) => 2011 + index),
-  JURISDICTIONS: ['NSW', 'Victoria', 'Queensland', 'South Australia', 'Western Australia', 'Tasmania', 'Northern Territory', 'ACT'],
-  GROUPS: ['First Nations peoples', 'Non-Indigenous Australians'],
-  colors: { focus: '#367bb5', secondary: '#7c91b5', bar: '#9cc8e8', ink: '#243b53', muted: '#526b82', grid: 'rgba(54,123,181,.12)' },
-  formatNumber: number => Number.isFinite(number) ? new Intl.NumberFormat('en-AU').format(number) : 'Not published',
-  isBreakYear: (state, year) => (state === 'NSW' && year === 2017) || (state === 'Victoria' && year === 2012),
-  async loadData() {
-    const count = value => {
-      if (value === '' || value === 'n.p.') return null;
-      if (!/^\d+$/.test(value)) throw new Error('Invalid count in prepared CSV.');
-      return Number(value);
-    };
-    const parse = row => ({ ...row, year: Number(row.year), count: count(row.count) });
-    const [states, national, roadUsers, firstNations] = await Promise.all([
-      d3.csv('data/states.csv', parse), d3.csv('data/national.csv', parse),
-      d3.csv('data/road_users.csv', parse), d3.csv('data/first_nations.csv', parse)
-    ]);
-    const unique = (rows, key) => new Set(rows.map(key)).size === rows.length;
-    if (states.length !== 99 || national.length !== 11 || firstNations.length !== 33 || roadUsers.length !== 132 ||
-        !unique(states, row => `${row.year}|${row.state}`) || !unique(national, row => row.year) ||
-        !unique(firstNations, row => `${row.year}|${row.group}`) || !unique(roadUsers, row => `${row.year}|${row.road_user}`)) {
-      throw new Error('Prepared CSV coverage or uniqueness check failed.');
-    }
-    const all = [...states, ...national, ...roadUsers, ...firstNations];
-    if (all.some(row => !this.YEARS.includes(row.year))) throw new Error('Unexpected reporting year.');
-    this.datasets = { states, national, roadUsers, firstNations };
-    this.ROAD_USERS = [...new Set(roadUsers.map(row => row.road_user))];
-    return this.datasets;
+window.G20 = window.G20 || {};
+G20.DATA_DIR = 'knime data/';
+G20.FILES = {
+  line: 'chart1_road_user_by_year.csv',
+  map: 'chart2_state_road_user_share.csv',
+  remoteness: 'chart3_remoteness_share.csv',
+  scatter: 'chart4_stay_scatter.csv',
+  age: 'chart5_age_mix_by_year.csv'
+};
+G20.YEARS = Array.from({ length: 11 }, (_, i) => 2011 + i);
+G20.AGE_ORDER = ['0-7', '8-16', '17-25', '26-39', '40-64', '65-74', '75+'];
+G20.COLORS = ['#086f70', '#e87b45', '#477da5', '#d16d78', '#8a6fb0', '#d3a735', '#527d68'];
+
+G20.parseCSV = function (text) {
+  const rows = [], headers = [];
+  let row = [], cell = '', quoted = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i], next = text[i + 1];
+    if (char === '"' && quoted && next === '"') { cell += '"'; i += 1; }
+    else if (char === '"') quoted = !quoted;
+    else if (char === ',' && !quoted) { row.push(cell); cell = ''; }
+    else if ((char === '\n' || char === '\r') && !quoted) {
+      if (char === '\r' && next === '\n') i += 1;
+      row.push(cell);
+      if (!headers.length) headers.push(...row);
+      else if (row.some(Boolean)) rows.push(row);
+      row = []; cell = '';
+    } else cell += char;
   }
+  if (cell || row.length) {
+    row.push(cell);
+    if (!headers.length) headers.push(...row);
+    else rows.push(row);
+  }
+  return rows.map(values => Object.fromEntries(headers.map((header, i) => [header, values[i] || ''])));
+};
+
+G20.loadData = async function () {
+  const entries = Object.entries(G20.FILES);
+  const values = await Promise.all(entries.map(([, file]) =>
+    fetch(G20.DATA_DIR + file).then(response => {
+      if (!response.ok) throw new Error(`Unable to load ${file}`);
+      return response.text();
+    }).then(G20.parseCSV)
+  ));
+  return Object.fromEntries(entries.map(([key], i) => [key, values[i]]));
+};
+
+G20.number = value => Number(value) || 0;
+G20.format = value => Math.round(value).toLocaleString();
+G20.percent = value => `${value.toFixed(1)}%`;
+G20.size = svg => {
+  const bounds = svg.getBoundingClientRect();
+  return [Math.max(300, bounds.width), Math.max(220, bounds.height)];
+};
+G20.clear = selector => {
+  const svg = document.querySelector(selector);
+  svg.innerHTML = '';
+  return svg;
+};
+G20.svg = (tag, attributes, parent) => {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attributes || {}).forEach(([key, value]) => element.setAttribute(key, value));
+  if (parent) parent.appendChild(element);
+  return element;
+};
+G20.tooltip = (svg, text, x, y) => {
+  G20.hideTooltip();
+  const tip = document.createElement('div');
+  tip.className = 'tooltip';
+  tip.textContent = text;
+  svg.parentElement.appendChild(tip);
+  tip.style.left = `${x}px`;
+  tip.style.top = `${y}px`;
+};
+G20.hideTooltip = () => document.querySelectorAll('.tooltip').forEach(tip => tip.remove());
+G20.options = (selector, values) => {
+  const control = document.querySelector(selector), current = control.value;
+  control.innerHTML = values.map(value => `<option value="${value}">${value}</option>`).join('');
+  if (values.includes(current)) control.value = current;
 };
