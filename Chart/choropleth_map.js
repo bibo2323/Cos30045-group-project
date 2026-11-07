@@ -12,7 +12,7 @@ const stateCodes = {
 
 let australianStates;
 function mapColor(intensity) {
-  const colors = [[253, 212, 158], [215, 48, 31], [75, 31, 15]];
+  const colors = [[77, 157, 224], [215, 48, 31], [75, 31, 15]];
   const position = intensity * (colors.length - 1);
   const index = Math.min(Math.floor(position), colors.length - 2);
   const progress = position - index;
@@ -39,7 +39,7 @@ window.renderChoroplethMap = function (data) {
 
   document.querySelector('#q2YearValue').value = year;
   document.querySelector('#mapLegend').innerHTML = 
-  '<span>Lower share</span><i style="background:#fdd49e"></i> <i style="background:#d7301f"></i><i style="background:#4b1f0f"></i><span>Higher share</span>';
+  '<span>Lower share</span><i style="background:#4d9de0"></i> <i style="background:#d7301f"></i><i style="background:#4b1f0f"></i><span>Higher share</span>';
 
   loadAustralianStates().then(geojson => {
     const projection = d3.geoMercator().fitExtent([[24, 18], [width - 24, height - 18]], geojson);

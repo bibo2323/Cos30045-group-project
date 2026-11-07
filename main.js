@@ -1,19 +1,26 @@
 window.addEventListener('load', async () => {
   const { G20 } = window;
+
   try {
     const data = await G20.loadData();
+
+    // Populate chart controls with values from the loaded data.
     const users = [...new Set(data.line.map(row => row['Road user group']))];
     const mapUsers = [...new Set(data.map.map(row => row['road user']))]
       .filter(value => /Motor|Pedal|Pedestrian/.test(value));
     const scatterUsers = [...new Set(data.scatter.map(row => row['Road user group']))];
+
     G20.options('#q1Select', users);
     G20.options('#q2Select', mapUsers);
     G20.options('#q4Select', scatterUsers);
+
+    // Display the total number of hospitalisations in 2021.
     document.querySelector('#heroTotal').textContent = G20.format(
       data.line.filter(row => +row['Calendar year'] === 2021)
         .reduce((total, row) => total + G20.number(row['Sum(Hospitalisations)']), 0)
     );
 
+    // Redraw every chart using the current control values.
     function render() {
       window.renderMultiLineChart(data.line);
       window.renderChoroplethMap(data.map);
@@ -22,11 +29,24 @@ window.addEventListener('load', async () => {
       window.renderStackedAreaChart(data.age);
     }
 
-    ['q1Select', 'q2Select', 'q2Year', 'q3Year', 'q4Select', 'q4Year', 'q5Year']
-      .forEach(id => document.getElementById(id).addEventListener('input', render));
+    const controlIds = [
+      'q1Select',
+      'q2Select',
+      'q2Year',
+      'q3Year',
+      'q4Select',
+      'q4Year',
+      'q5Year'
+    ];
+
+    controlIds.forEach(id => {
+      document.getElementById(id).addEventListener('input', render);
+    });
+
     render();
     window.addEventListener('resize', render);
   } catch (error) {
+    // Show a useful message when the data cannot be loaded.
     document.querySelector('.explore').insertAdjacentHTML(
       'afterbegin',
       '<p class="insight">The chart files could not be loaded. Please run the site through a local web server.</p>'

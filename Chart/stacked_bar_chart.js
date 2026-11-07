@@ -1,8 +1,10 @@
 window.renderStackedBarChart = function (data) {
   const { G20 } = window, svg = G20.clear('#stackedChart'), [width, height] = G20.size(svg);
   const year = +document.querySelector('#q3Year').value, groups = ['First Nations people', 'Non-Indigenous'], areas = ['Major Cities', 'Regional', 'Remote'];
+  const chartLeft = width < 600 ? 100 : 180, chartRight = 30, groupGap = width < 600 ? 30 : 80;
+  const barWidth = Math.max(60, (width - chartLeft - chartRight - groupGap) / 2);
   groups.forEach((group, groupIndex) => {
-    const x = 110 + groupIndex * (width - 140) / 2, barWidth = (width - 140) / 3; let offset = 0;
+    const x = chartLeft + groupIndex * (barWidth + groupGap); let offset = 0;
     areas.forEach((area, areaIndex) => {
       const row = data.find(item => +item['Calendar year'] === year && item['First Nations status'] === group && item['ABS remoteness area'] === area);
       const segmentHeight = (height - 85) * G20.number(row?.['Percent share']) / 100;

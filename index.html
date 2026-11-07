@@ -18,59 +18,176 @@
 <body>
   <header class="site-header">
     <a class="brand" href="#top"><span class="brand-mark">20</span><span>Group 20</span></a>
-    <nav><a href="#explore">Explore</a><a href="#method">About the data</a></nav>
+    <nav><a href = "#explore">Explore</a>
+    <a href="#method">About the data</a></nav>
+
   </header>
-  <main id="top">
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">COS30045 · DATA STORY</p>
-        <h1>Road injury in<br><em>Australia.</em></h1>
-        <p class="lede">An interactive look at who is hospitalised after road traffic injuries, where they are injured, and how the story has changed from 2011 to 2021.</p>
-        <a class="button" href="#explore">Explore the data <span>↓</span></a>
+        <p class="eyebrow">COS30045 | DATA STORY</p>
+        <h1>Road injury in<br>
+          <em> Australia.</em></h1>
+        <p class="lede">1. Look into who is hospitalised after road traffic injuries?</p>
+        <p class="lede">2. Where they are injured?</p>
+        <p class="lede">3. How the story has changed from 2011 to 2021?</p>
       </div>
-      <div class="hero-stat"><span class="stat-number" id="heroTotal">—</span><span class="stat-label">hospitalisations<br>in 2021 across the<br>road-user groups</span></div>
+      <div class="hero-stat"><span class="stat-number" id="heroTotal">—</span>
+        <span class="stat-label">Hospitalisations<br>in 2021 across the<br>
+          road-user groups</span></div>
     </section>
-    <section id="explore" class="explore">
-      <div class="section-intro"><p class="eyebrow">FIVE QUESTIONS · FIVE VIEWS</p><h2>What does the data tell us?</h2><p>Use the controls to move through each question. Hover or focus chart marks to reveal exact values.</p></div>
 
+    <section id="explore" class="explore">
+      <h2>What does the data tell us?</h2>
+
+      <!-- Chart 1: Hospitalisations by road user and year -->
       <article class="chart-section" id="q1">
-        <div class="question"><span>01</span><div><p class="eyebrow">TREND</p><h3>How has the number of hospitalised injuries changed for each road user type?</h3></div></div>
-        <div class="toolbar"><label>Highlight a road user <select id="q1Select"></select></label></div>
-        <div class="chart-shell"><svg id="lineChart" role="img" aria-label="Multi-line chart of hospitalisations by road user and year"></svg></div>
+        <div class="question">
+          <span>01</span>
+          <div>
+            <p class="eyebrow">TREND</p>
+            <h3>How has the number of hospitalised injuries changed for each road user type?</h3>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label>
+            Road user
+            <select id="q1Select"></select>
+          </label>
+        </div>
+
+        <div class="chart-shell">
+          <svg
+            id="lineChart"
+            role="img"
+            aria-label="Multi-line chart of hospitalisations by road user and year"
+          ></svg>
+        </div>
         <p class="insight" id="q1Insight"></p>
       </article>
 
+      <!-- Chart 2: Injury share by state and territory -->
       <article class="chart-section" id="q2">
-        <div class="question"><span>02</span><div><p class="eyebrow">PLACE</p><h3>Which states and territories have the biggest share of motorcyclist, cyclist, or pedestrian injuries?</h3></div></div>
-        <div class="toolbar"><label>Road user <select id="q2Select"></select></label><label>Year <input id="q2Year" type="range" min="2011" max="2021" value="2021"><output id="q2YearValue">2021</output></label></div>
-        <div class="chart-shell map-shell"><svg id="mapChart" role="img" aria-label="Choropleth map of Australian state and territory injury shares"></svg><div class="legend" id="mapLegend"></div></div>
+        <div class="question">
+          <span>02</span>
+          <div>
+            <p class="eyebrow">PLACE</p>
+            <h3>Which states and territories have the biggest share of motorcyclist, cyclist, or pedestrian injuries?</h3>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label>
+            Road user
+            <select id="q2Select"></select>
+          </label>
+          <label>
+            Year
+            <input id="q2Year" type="range" min="2011" max="2021" value="2021">
+            <output id="q2YearValue">2021</output>
+          </label>
+        </div>
+        <div class="chart-shell map-shell">
+          <svg
+            id="mapChart"
+            role="img"
+            aria-label="Choropleth map of Australian state and territory injury shares"
+          ></svg>
+          <div class="legend" id="mapLegend"></div>
+        </div>
         <p class="insight" id="q2Insight"></p>
       </article>
 
+      <!-- Chart 3: Remoteness comparison by First Nations status -->
       <article class="chart-section" id="q3">
-        <div class="question"><span>03</span><div><p class="eyebrow">EQUITY</p><h3>How does the spread of injuries across remoteness areas differ between First Nations and non-Indigenous people?</h3></div></div>
-        <div class="toolbar"><label>Year <input id="q3Year" type="range" min="2011" max="2021" value="2021"><output id="q3YearValue">2021</output></label></div>
-        <div class="chart-shell"><svg id="stackedChart" role="img" aria-label="100 percent stacked bars comparing remoteness by First Nations status"></svg></div>
+        <div class="question">
+          <span>03</span>
+          <div>
+            <p class="eyebrow">EQUITY</p>
+            <h3>How does the spread of injuries across remoteness areas differ between First Nations and non-Indigenous people?</h3>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label>
+            Year
+            <input id="q3Year" type="range" min="2011" max="2021" value="2021">
+            <output id="q3YearValue">2021</output>
+          </label>
+        </div>
+        <div class="chart-shell">
+          <svg
+            id="stackedChart"
+            role="img"
+            aria-label="100 percent stacked bars comparing remoteness by First Nations status"
+          ></svg>
+        </div>
         <p class="insight" id="q3Insight"></p>
       </article>
 
+      <!-- Chart 4: Average hospital stay by age group -->
       <article class="chart-section" id="q4">
-        <div class="question"><span>04</span><div><p class="eyebrow">SEVERITY</p><h3>How does the length of hospital stay vary across age groups and road user types?</h3></div></div>
-        <div class="toolbar"><label>Road user <select id="q4Select"></select></label><label>Year <input id="q4Year" type="range" min="2011" max="2021" value="2021"><output id="q4YearValue">2021</output></label></div>
-        <div class="chart-shell"><svg id="scatterChart" role="img" aria-label="Scatter plot of average hospital stay by age group"></svg></div>
+        <div class="question">
+          <span>04</span>
+          <div>
+            <p class="eyebrow">SEVERITY</p>
+            <h3>How does the length of hospital stay vary across age groups and road user types?</h3>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label>
+            Road user
+            <select id="q4Select"></select>
+          </label>
+          <label>
+            Year
+            <input id="q4Year" type="range" min="2011" max="2021" value="2021">
+            <output id="q4YearValue">2021</output>
+          </label>
+        </div>
+        <div class="chart-shell">
+          <svg
+            id="scatterChart"
+            role="img"
+            aria-label="Scatter plot of average hospital stay by age group"
+          ></svg>
+        </div>
         <p class="insight" id="q4Insight"></p>
       </article>
 
+      <!-- Chart 5: Age distribution over time -->
       <article class="chart-section" id="q5">
-        <div class="question"><span>05</span><div><p class="eyebrow">AGE MIX</p><h3>How has the age distribution of people hospitalised due to road traffic injuries changed?</h3></div></div>
-        <div class="toolbar"><label>Show year <input id="q5Year" type="range" min="2011" max="2021" value="2021"><output id="q5YearValue">2021</output></label></div>
-        <div class="chart-shell"><svg id="areaChart" role="img" aria-label="Stacked area chart of age distribution by year"></svg></div>
+        <div class="question">
+          <span>05</span>
+          <div>
+            <p class="eyebrow">AGE MIX</p>
+            <h3>How has the age distribution of people hospitalised due to road traffic injuries changed?</h3>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label>
+            Show year
+            <input id="q5Year" type="range" min="2011" max="2021" value="2021">
+            <output id="q5YearValue">2021</output>
+          </label>
+        </div>
+        <div class="chart-shell">
+          <svg
+            id="areaChart"
+            role="img"
+            aria-label="Stacked area chart of age distribution by year"
+          ></svg>
+        </div>
         <p class="insight" id="q5Insight"></p>
       </article>
     </section>
-    <section id="method" class="method"><p class="eyebrow">READING THE DATA</p><h2>Built from the KNIME outputs</h2><p>These charts use the five supplied CSV files in the <code>knime data</code> folder. Values represent hospitalisations, not unique people or population-adjusted risk. Percentages are calculated within the relevant state, group, or year so comparisons remain meaningful.</p></section>
-  </main>
-  <footer><span>Group 20 · Road injury in Australia</span><span>Code is assisted by GenAI, 2026</span></footer>
+    <section id="method" class="method"><p class="eyebrow">READING THE DATA</p>
+      <h2>Built from the KNIME outputs</h2>
+      <p>These charts use the five supplied CSV files in the 
+        <code>Knime Data</code> folder. 
+        These numbers show hospital visits, not the number of different people or each person’s chance of being hospitalised.
+        Percentages are calculated separately for each race, state, group, or year to make fair comparisons.</p>
+      </section>
+
+  <footer><span>Group 20 | Road injury in Australia</span><span>Code is assisted by GenAI</span></footer>
   <script>window.addEventListener('load', () => document.body.classList.add('loaded'));</script>
 </body>
 </html>
